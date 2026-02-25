@@ -3,13 +3,14 @@ import bcrypt from 'bcrypt';
 
 export class AuthService {
     async register(email: string, password: string) {
-        
-        const hashedPassword = await bcrypt.hash(password, 10);
+
+        // const existingUser = await prisma.user.findUnique({ where: { email } });
+        // if (existingUser) {
+        //     throw new Error('Email já registrado');
+        // }
+        const newUser = { email,passwordHash: bcrypt.hashSync(password, 10) };
         const user = await prisma.user.create({
-            data: {
-                email,
-                password: hashedPassword
-            }
+            data: {email: newUser.email, password: newUser.passwordHash}
         });
         return `User registered! - ${user.email}`;
     }

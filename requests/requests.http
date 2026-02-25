@@ -8,7 +8,6 @@ POST  {{base_url}}/auth/register
 Content-Type: application/json
 
 {
-  "email": "john.doe@example.com",
+  "email": "felipemagic7@gmail.com",
   "password": "password123"
 }
-

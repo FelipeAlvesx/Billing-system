@@ -1,7 +1,12 @@
 import { PrismaClient } from '@prisma/client';
-import { PrismaPostgresAdapter } from '@prisma/adapter-ppg'
+import { PrismaPg } from '@prisma/adapter-pg';
 
-const connectionString = `${process.env.DATABASE_URL}`;
-const adapter = new PrismaPostgresAdapter({ connectionString })
+const connectionString = `${process.env.DATABASE_URL}?sslmode=disable`;
+const adapter = new PrismaPg({
+  connectionString,
+});
 
-export const prisma = new PrismaClient({ adapter });
+export const prisma = new PrismaClient({
+  adapter,
+  errorFormat: 'pretty',
+});
