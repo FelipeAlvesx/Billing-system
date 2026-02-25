@@ -1,3 +1,4 @@
+
 import { Request, Response } from 'express';
 import { AuthService } from './auth.service';
 
@@ -6,7 +7,7 @@ export class AuthController {
 
   register = async (req: Request, res: Response) => {
     try {
-      const { email, password } = req.body;
+      const { name, email, password } = req.body;
       
       // Validação
       if (!email || !password) {
@@ -14,7 +15,7 @@ export class AuthController {
       }
       
       // Chama serviço
-      const user = await this.authService.login(email, password);
+      const user = await this.authService.register(name, email, password);
       
       // Responde
       return res.status(201).json(user);
@@ -24,6 +25,8 @@ export class AuthController {
   };
 
   login = async (req: Request, res: Response) => {
-    // ... lógica de login
+    const { email, password } = req.body;
+    const user = await this.authService.login(email, password);
+    return res.status(200).json(user);  
   };
 }

@@ -1,8 +1,15 @@
+import { prisma }  from "../../config/db";
+
+
 export class AuthService {
 
     async login(email: string, password: string){
-        // Implement login logic here
-        return "Login successful!";
+        const user = await prisma.user.create({data: {
+            name: "Felipe",
+            email,
+            password
+        }});
+        return user;
     }
 
     async register(name: string, email: string, password: string) {
