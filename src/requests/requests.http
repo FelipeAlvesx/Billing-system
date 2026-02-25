@@ -2,3 +2,13 @@
 
 ###
 GET {{base_url}}/health
+
+###
+POST {{base_url}}/users
+Content-Type: application/json
+
+{
+  "name": "John Doe",
+  "email": "john.doe@example.com" ,
+  "cpf": "12345678900"
+}
