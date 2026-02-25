@@ -6,18 +6,107 @@
 
 generator client {
   provider = "prisma-client-js"
-  output   = "../src/generated/prisma"
 }
 
 datasource db {
   provider = "postgresql"
 }
 
+enum SubscriptionStatus {
+  ACTIVE
+  PAST_DUE
+  CANCELED
+}
+
 model User {
   id        String   @id @default(uuid())
-  name      String
   email     String   @unique
   password  String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  subscriptions Subscription[]
+  usageCounters UsageCounter[]
+
+  @@map("users")
+}
+
+model Plan {
+  id        String   @id @default(uuid())
+  code      String   @unique // "FREE" | "PRO" | "ENTERPRISE"
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  features      PlanFeature[]
+  limits        PlanLimit[]
+  subscriptions Subscription[]
+
+  @@map("plans")
+}
+
+model PlanFeature {
+  id         String   @id @default(uuid())
+  planId     String
+  featureKey String // "EXPORT_PDF", "API_ACCESS", etc.
+  createdAt  DateTime @default(now())
+
+  plan Plan @relation(fields: [planId], references: [id], onDelete: Cascade)
+
+  @@unique([planId, featureKey])
+  @@index([featureKey])
+  @@map("plan_features")
+}
+
+model PlanLimit {
+  id         String   @id @default(uuid())
+  planId     String
+  metricKey  String // "API_CALLS"
+  limitValue Int // -1 = ilimitado
+  createdAt  DateTime @default(now())
+
+  plan Plan @relation(fields: [planId], references: [id], onDelete: Cascade)
+
+  @@unique([planId, metricKey])
+  @@index([metricKey])
+  @@map("plan_limits")
+}
+
+model Subscription {
+  id     String             @id @default(uuid())
+  userId String
+  planId String
+  status SubscriptionStatus @default(ACTIVE)
+
+  currentPeriodStart DateTime
+  currentPeriodEnd   DateTime
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  plan Plan @relation(fields: [planId], references: [id])
+
+  @@index([userId, status])
+  @@index([planId])
+  @@map("subscriptions")
+}
+
+model UsageCounter {
+  id          String   @id @default(uuid())
+  userId      String
+  metricKey   String // "API_CALLS"
+  periodStart DateTime
+  periodEnd   DateTime
+  used        Int      @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, metricKey, periodStart, periodEnd])
+  @@index([userId, metricKey])
+  @@index([periodStart, periodEnd])
+  @@map("usage_counters")
 }

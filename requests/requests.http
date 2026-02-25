@@ -4,10 +4,11 @@
 GET {{base_url}}/health
 
 ###
-POST  {{base_url}}/login
+POST  {{base_url}}/auth/register
 Content-Type: application/json
 
 {
   "email": "john.doe@example.com",
   "password": "password123"
 }
+

@@ -7,10 +7,10 @@ import { prisma } from "./config/db"
 dotenv.config();
 
 export const app: Express = express();
-app.use("/auth", authRouter);
-app.use(errorHandler);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use("/auth", authRouter);
+app.use(errorHandler);
 
 
 app.get("/health", (req, res) => {
