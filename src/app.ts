@@ -6,6 +6,7 @@ import authRouter from "./modules/auth/auth.routes";
 import { errorHandler } from "./shared/error-handler";
 import { prisma } from "./config/db";
 import { jwtMiddleware } from "./middlewares/auth.middleware";
+import { subscriptionController } from "./modules/billing/subscription.factory";
 
 
 export const app: Express = express();
@@ -18,6 +19,9 @@ app.use(errorHandler);
 app.get("/health", jwtMiddleware, (req, res) => {
   res.send("Pong");
 });
+
+
+app.get("/me/subscription", jwtMiddleware, subscriptionController.getActiveSubscription);
 
 
 process.on('SIGINT', async () => {
