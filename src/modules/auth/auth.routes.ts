@@ -1,8 +1,7 @@
 import { Router } from "express";
-import { AuthController } from "./auth.controller";
+import { authController } from "./auth.factory";
 
-const authRouter = Router();
-const authController = new AuthController();   
+const authRouter = Router();  
 
 authRouter.post("/login", authController.login);
 authRouter.post("/register", authController.register);

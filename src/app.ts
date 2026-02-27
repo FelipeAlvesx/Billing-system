@@ -1,10 +1,12 @@
+import dotenv from "dotenv";
+dotenv.config(); // DEVE vir ANTES de todos os outros imports
+
 import express, { type Express } from "express";
 import authRouter from "./modules/auth/auth.routes";
 import { errorHandler } from "./shared/error-handler";
-import dotenv from "dotenv";
-import { prisma } from "./config/db"
+import { prisma } from "./config/db";
+import { jwtMiddleware } from "./middlewares/auth.middleware";
 
-dotenv.config();
 
 export const app: Express = express();
 app.use(express.json());
@@ -13,7 +15,7 @@ app.use("/auth", authRouter);
 app.use(errorHandler);
 
 
-app.get("/health", (req, res) => {
+app.get("/health", jwtMiddleware, (req, res) => {
   res.send("Pong");
 });
 

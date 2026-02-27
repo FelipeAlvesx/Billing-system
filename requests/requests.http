@@ -1,13 +1,27 @@
 @base_url=http://localhost:3000
+@token={{Login.response.body.token}}
 
 ###
 GET {{base_url}}/health
+Authorization: Bearer {{token}}
 
 ###
 POST  {{base_url}}/auth/register
 Content-Type: application/json
 
 {
-  "email": "felipemagic7@gmail.com",
+  "email": "felipemi7@gmail.com",
   "password": "password123"
 }
+
+
+### login
+# @name Login
+POST  {{base_url}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "felipemi7@gmail.com",
+  "password": "password123"
+}
+
