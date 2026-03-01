@@ -37,3 +37,8 @@ Authorization: Bearer {{token}}
 ### GET PLANS
 GET {{base_url}}/plans  
 Authorization: Bearer {{token}}
+
+
+### EXPORT PDF (REQUIRES EXPORT_PDF FEATURE)
+GET {{base_url}}/exports/pdf
+Authorization: Bearer {{token}}

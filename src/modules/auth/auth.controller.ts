@@ -23,9 +23,6 @@ export class AuthController {
   };
 
   login = async (req: Request, res: Response) => {
-
-    console.log("Login request received with body:", req.body); // Log the request body for debugging
-
    try{
       const { email, password }: any = req.body;
       if (!email || !password) {

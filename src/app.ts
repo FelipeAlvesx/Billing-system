@@ -13,15 +13,18 @@ import { jwtMiddleware } from "./middlewares/auth.middleware";
 export const app: Express = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+app.get("/health", (req, res) => {
+  res.send("Pong");
+});
+
+
 app.use("/auth", authRouter);
 app.use(jwtMiddleware, billingRouter);
 app.use("/plans", jwtMiddleware, planRouter);
 app.use(errorHandler);
 
 
-app.get("/health", (req, res) => {
-  res.send("Pong");
-});
 
 
 process.on('SIGINT', async () => {
