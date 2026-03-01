@@ -3,7 +3,6 @@ import { PlanRepo } from "@/repos/plan.repo";
 import { PrismaClient } from "@prisma/client";
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
-import { Errors } from "@/shared/errors";
 
 export class AuthService {
 
