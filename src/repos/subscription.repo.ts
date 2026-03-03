@@ -12,7 +12,8 @@ export class SubscriptionRepo {
             include: {
                 plan: {
                     include: {
-                        features: true
+                        features: true,
+                        limits: true
                     }   
                 }
             }

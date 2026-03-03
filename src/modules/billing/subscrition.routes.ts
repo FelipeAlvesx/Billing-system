@@ -11,13 +11,11 @@ const guard = billingGuard(prisma);
 
 billingRouter.get("/me/subscription", subscriptionController.getActiveSubscription);
 
-billingRouter.get("/exports/pdf",
-    jwtMiddleware,
-    guard.requireFeature(FeatureKey.BASIC_DASHBOARD),
-    (_req, res) => {
+billingRouter.get("/exports/pdf", jwtMiddleware, guard.requireFeature(FeatureKey.EXPORT_PDF), (_req, res) => {
       return res.status(200).json({ success: true, data: { ok: true, message: "PDF export stub" } });
     }
   );
 
-
 export default billingRouter;
+
+

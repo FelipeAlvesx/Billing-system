@@ -7,6 +7,12 @@ export const FeatureKey = {
 
 export type FeatureKey = (typeof FeatureKey)[keyof typeof FeatureKey];
 
+export const MetricKey = {
+  API_CALLS: "API_CALLS",
+} as const;
+
+export type MetricKey = (typeof MetricKey)[keyof typeof MetricKey];
+
 export const SubscriptionStatus = {
   ACTIVE: "ACTIVE",
   PAST_DUE: "PAST_DUE",

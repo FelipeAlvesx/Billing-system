@@ -8,6 +8,7 @@ import authRouter from "./modules/auth/auth.routes";
 import planRouter from "./modules/plans/plan.routes";
 import { errorHandler } from "./shared/error-handler";
 import { jwtMiddleware } from "./middlewares/auth.middleware";
+import { usageRouter } from "./modules/usage/usage.routes";
 
 
 export const app: Express = express();
@@ -22,6 +23,7 @@ app.get("/health", (req, res) => {
 app.use("/auth", authRouter);
 app.use(jwtMiddleware, billingRouter);
 app.use("/plans", jwtMiddleware, planRouter);
+app.use("/usage", jwtMiddleware, usageRouter);
 app.use(errorHandler);
 
 

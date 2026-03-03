@@ -8,3 +8,4 @@ const userRepo = new UserRepo(prisma);
 const planRepo = new PlanRepo(prisma);
 const authService = new AuthService(userRepo, planRepo, prisma);
 export const authController = new AuthController(authService);
+
