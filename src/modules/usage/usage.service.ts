@@ -12,12 +12,48 @@ export class UsageService {
         this.usageRepo = new UsageRepo(prisma);
     }
 
+    private getCurrentPeriod() {
+        const now = new Date();
+        const year = now.getFullYear();
+        const month = now.getMonth();
+        
+        return {
+            periodStart: new Date(year, month, 1),
+            periodEnd: new Date(year, month + 1, 0)
+        };
+    }
 
     async consume(userId: any, metricKey: any, cost: any){
+        
+        //get active subscription with plan features and limits
+        const activeSubscription = await this.subRepo.findActiveByUserId(userId);
+        const limits = activeSubscription?.plan.limits || [];
+
+        //find the limit for the metricKey
+        const limit = limits.find(l => l.metricKey === metricKey);
+
+        if(!limit) throw new Error("No limit found for this metric in the active subscription");
+
+        //get current usage for the metric
+        const { periodStart, periodEnd } = this.getCurrentPeriod();
+        const currentUsage = await this.usageRepo.findCounter({userId, metricKey, periodStart, periodEnd});
+
+        if(currentUsage && currentUsage.used + cost > limit.limitValue){
+            throw new Error("Usage limit exceeded for this metric");
+        }
+
+        //increment usage
+        if(currentUsage){
+            await this.usageRepo.incrementCounter(currentUsage.id, cost);
+        }else{
+            const newCounter = await this.usageRepo.createCounter({userId, metricKey, periodStart, periodEnd});
+            await this.usageRepo.incrementCounter(newCounter.id, cost);
+        }
 
     }
 
     async getMyUsage(userEmail: string) {
-        return "calling get my usage";
+        const { periodStart, periodEnd } = this.getCurrentPeriod();
+        return this.usageRepo.listUsageForPeriod(userEmail, periodStart, periodEnd);
     }
 }

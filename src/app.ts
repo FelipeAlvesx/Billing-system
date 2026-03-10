@@ -27,6 +27,10 @@ app.use("/usage", jwtMiddleware, usageRouter);
 app.use(errorHandler);
 
 
+app.get("/api/data", (req, res) => {
+  
+});
+
 
 
 process.on('SIGINT', async () => {
