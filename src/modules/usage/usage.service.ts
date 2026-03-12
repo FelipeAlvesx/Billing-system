@@ -1,14 +1,17 @@
 import { SubscriptionRepo } from "@/repos/subscription.repo";
 import { UsageRepo } from "@/repos/usage.repo";
+import { UserRepo } from "@/repos/user.repo";
 import { PrismaClient } from "@prisma/client";
 
 export class UsageService {
     private subRepo: SubscriptionRepo;
     private usageRepo: UsageRepo;
+    private userRepo: UserRepo;
 
     constructor(private readonly prisma: PrismaClient) {
         this.subRepo = new SubscriptionRepo(prisma);
         this.usageRepo = new UsageRepo(prisma);
+        this.userRepo = new UserRepo(prisma);
     }
 
     private getCurrentPeriod() {
@@ -73,8 +76,10 @@ export class UsageService {
 
     async getMyUsage(userEmail: string) {
         const { periodStart, periodEnd } = this.getCurrentPeriod();
+        const user = await this.userRepo.findByEmail(userEmail);
+        if (!user) throw new Error("User not found");
         return await this.usageRepo.listUsageForPeriod(
-            userEmail,
+            user.id,
             periodStart,
             periodEnd,
         );
