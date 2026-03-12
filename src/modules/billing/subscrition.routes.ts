@@ -2,20 +2,36 @@ import { Router } from "express";
 import { subscriptionController } from "./subscription.factory";
 import { billingGuard } from "./billing.guard";
 import { jwtMiddleware } from "@/middlewares/auth.middleware";
-import { FeatureKey } from "./billing.types";
+import { FeatureKey, MetricKey } from "./billing.types";
 import { prisma } from "@/config/db";
+import { UsageService } from "../usage/usage.service";
+import { UserRepo } from "@/repos/user.repo";
 
 const billingRouter = Router();
 const guard = billingGuard(prisma);
+const usageService = new UsageService(prisma);
+const userRepo = new UserRepo(prisma);
 
+billingRouter.get(
+    "/me/subscription",
+    subscriptionController.getActiveSubscription,
+);
 
-billingRouter.get("/me/subscription", subscriptionController.getActiveSubscription);
+// stoped here!!!!!
+billingRouter.get(
+    "/exports/pdf",
+    jwtMiddleware,
+    guard.requireFeature(FeatureKey.BASIC_DASHBOARD),
+    async (req, res) => {
+        const userEmail = req.user?.userEmail;
+        const user = await userRepo.findByEmail(userEmail!);
 
-billingRouter.get("/exports/pdf", jwtMiddleware, guard.requireFeature(FeatureKey.EXPORT_PDF), (_req, res) => {
-      return res.status(200).json({ success: true, data: { ok: true, message: "PDF export stub" } });
-    }
-  );
+        await usageService.consume(user?.id, MetricKey.API_CALLS, 1);
+        return res.status(200).json({
+            success: true,
+            data: { ok: true, message: "PDF export stub" },
+        });
+    },
+);
 
 export default billingRouter;
-
-

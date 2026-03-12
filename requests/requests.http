@@ -28,8 +28,8 @@ Content-Type: application/json
   "password": "password123"
 }
 
-
-### GET SUBSCRIPTION
+  
+### GET ME SUBSCRIPTION
 GET {{base_url}}/me/subscription
 Authorization: Bearer {{token}}
 

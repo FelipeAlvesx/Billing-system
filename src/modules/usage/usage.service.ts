@@ -3,9 +3,8 @@ import { UsageRepo } from "@/repos/usage.repo";
 import { PrismaClient } from "@prisma/client";
 
 export class UsageService {
-    
     private subRepo: SubscriptionRepo;
-    private usageRepo: UsageRepo
+    private usageRepo: UsageRepo;
 
     constructor(private readonly prisma: PrismaClient) {
         this.subRepo = new SubscriptionRepo(prisma);
@@ -16,44 +15,68 @@ export class UsageService {
         const now = new Date();
         const year = now.getFullYear();
         const month = now.getMonth();
-        
+
         return {
             periodStart: new Date(year, month, 1),
-            periodEnd: new Date(year, month + 1, 0)
+            periodEnd: new Date(year, month + 1, 0),
         };
     }
 
-    async consume(userId: any, metricKey: any, cost: any){
-        
-        //get active subscription with plan features and limits
-        const activeSubscription = await this.subRepo.findActiveByUserId(userId);
-        const limits = activeSubscription?.plan.limits || [];
+    async consume(userId: any, metricKey: any, cost: any) {
+        try {
+            //get active subscription with plan features and limits
+            const activeSubscription =
+                await this.subRepo.findActiveByUserId(userId);
+            console.log("Active subscription:", activeSubscription);
 
-        //find the limit for the metricKey
-        const limit = limits.find(l => l.metricKey === metricKey);
+            const limits = activeSubscription?.plan.limits || [];
 
-        if(!limit) throw new Error("No limit found for this metric in the active subscription");
+            //find the limit for the metricKey
+            const limit = limits.find((l) => l.metricKey == metricKey);
 
-        //get current usage for the metric
-        const { periodStart, periodEnd } = this.getCurrentPeriod();
-        const currentUsage = await this.usageRepo.findCounter({userId, metricKey, periodStart, periodEnd});
+            if (!limit || !limit.limitValue)
+                throw new Error(
+                    "No limit found for this metric in the active subscription",
+                );
 
-        if(currentUsage && currentUsage.used + cost > limit.limitValue){
-            throw new Error("Usage limit exceeded for this metric");
+            //get current usage for the metric
+            const { periodStart, periodEnd } = this.getCurrentPeriod();
+            const currentUsage = await this.usageRepo.findCounter({
+                userId,
+                metricKey,
+                periodStart,
+                periodEnd,
+            });
+
+            if (currentUsage && currentUsage.used + cost > limit.limitValue) {
+                throw new Error("Usage limit exceeded for this metric");
+            }
+
+            //increment usage
+            if (currentUsage) {
+                console.log("Current usage before increment:", currentUsage);
+                await this.usageRepo.incrementCounter(currentUsage.id, cost);
+            } else {
+                const newCounter = await this.usageRepo.createCounter({
+                    userId,
+                    metricKey,
+                    periodStart,
+                    periodEnd,
+                });
+                await this.usageRepo.incrementCounter(newCounter.id, cost);
+            }
+        } catch (err) {
+            console.error("Error consuming usage:", err);
+            throw err;
         }
-
-        //increment usage
-        if(currentUsage){
-            await this.usageRepo.incrementCounter(currentUsage.id, cost);
-        }else{
-            const newCounter = await this.usageRepo.createCounter({userId, metricKey, periodStart, periodEnd});
-            await this.usageRepo.incrementCounter(newCounter.id, cost);
-        }
-
     }
 
     async getMyUsage(userEmail: string) {
         const { periodStart, periodEnd } = this.getCurrentPeriod();
-        return this.usageRepo.listUsageForPeriod(userEmail, periodStart, periodEnd);
+        return await this.usageRepo.listUsageForPeriod(
+            userEmail,
+            periodStart,
+            periodEnd,
+        );
     }
 }
