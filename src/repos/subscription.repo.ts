@@ -1,40 +1,44 @@
 import { PrismaClient } from "@prisma/client";
 
 export class SubscriptionRepo {
-
     constructor(private readonly prisma: PrismaClient) {}
 
+    async changePlanIdByUserEmail(userEmail: string, newPlanId: string) {
+        return await this.prisma.subscription.updateMany({
+            where: { user: { email: userEmail }, status: "ACTIVE" },
+            data: { planId: newPlanId },
+        });
+    }
 
     async getActiveWithPlanFeatures(userId: string) {
         return await this.prisma.subscription.findFirst({
-            where: {userId, status: 'ACTIVE'},
-            orderBy: {createdAt: 'desc'},
+            where: { userId, status: "ACTIVE" },
+            orderBy: { createdAt: "desc" },
             include: {
                 plan: {
                     include: {
                         features: true,
-                        limits: true
-                    }   
-                }
-            }
-        })
+                        limits: true,
+                    },
+                },
+            },
+        });
     }
-
 
     async findActiveByUserId(userId: string) {
         return await this.prisma.subscription.findFirst({
             where: {
                 userId,
-                status: 'ACTIVE'
+                status: "ACTIVE",
             },
             include: {
                 plan: {
                     include: {
                         limits: true,
-                        features: true
-                    }
-                }
-            }
+                        features: true,
+                    },
+                },
+            },
         });
     }
 
@@ -45,10 +49,10 @@ export class SubscriptionRepo {
                 plan: {
                     include: {
                         limits: true,
-                        features: true
-                    }
-                }
-            }
+                        features: true,
+                    },
+                },
+            },
         });
     }
 }

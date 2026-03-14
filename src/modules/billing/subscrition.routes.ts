@@ -13,15 +13,17 @@ const usageService = new UsageService(prisma);
 const userRepo = new UserRepo(prisma);
 
 billingRouter.get(
-    "/me/subscription",
+    "billing/me/subscription",
     subscriptionController.getActiveSubscription,
 );
+
+billingRouter.post("/billing/change-plan", subscriptionController.changePlan);
 
 // stoped here!!!!!
 billingRouter.get(
     "/exports/pdf",
     jwtMiddleware,
-    guard.requireFeature(FeatureKey.BASIC_DASHBOARD),
+    guard.requireFeature(FeatureKey.EXPORT_PDF),
     async (req, res) => {
         const userEmail = req.user?.userEmail;
         const user = await userRepo.findByEmail(userEmail!);

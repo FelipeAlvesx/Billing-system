@@ -47,3 +47,12 @@ Authorization: Bearer {{token}}
 ### GET MY USAGE
 GET {{base_url}}/usage/my-usage
 Authorization: Bearer {{token}}
+
+
+POST {{base_url}}/billing/change-plan
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "planId": "newPlanId"
+}

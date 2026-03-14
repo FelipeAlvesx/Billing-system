@@ -10,15 +10,13 @@ import { errorHandler } from "./shared/error-handler";
 import { jwtMiddleware } from "./middlewares/auth.middleware";
 import { usageRouter } from "./modules/usage/usage.routes";
 
-
 export const app: Express = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.get("/health", (req, res) => {
-  res.send("Pong");
+    res.send("Pong");
 });
-
 
 app.use("/auth", authRouter);
 app.use(jwtMiddleware, billingRouter);
@@ -26,16 +24,11 @@ app.use("/plans", jwtMiddleware, planRouter);
 app.use("/usage", jwtMiddleware, usageRouter);
 app.use(errorHandler);
 
+app.get("/api/data", (req, res) => {});
 
-app.get("/api/data", (req, res) => {
-  
-});
-
-
-
-process.on('SIGINT', async () => {
-  await prisma.$disconnect();
-  process.exit(0);
+process.on("SIGINT", async () => {
+    await prisma.$disconnect();
+    process.exit(0);
 });
 
 export default app;
