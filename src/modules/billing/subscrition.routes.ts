@@ -13,13 +13,16 @@ const usageService = new UsageService(prisma);
 const userRepo = new UserRepo(prisma);
 
 billingRouter.get(
-    "billing/me/subscription",
+    "/billing/me/subscription",
     subscriptionController.getActiveSubscription,
 );
 
-billingRouter.post("/billing/change-plan", subscriptionController.changePlan);
+billingRouter.post(
+    "/billing/change-plan",
+    jwtMiddleware,
+    subscriptionController.changePlan,
+);
 
-// stoped here!!!!!
 billingRouter.get(
     "/exports/pdf",
     jwtMiddleware,

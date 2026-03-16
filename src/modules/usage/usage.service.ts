@@ -37,7 +37,7 @@ export class UsageService {
             //find the limit for the metricKey
             const limit = limits.find((l) => l.metricKey == metricKey);
 
-            if (!limit || !limit.limitValue)
+            if (!limit)
                 throw new Error(
                     "No limit found for this metric in the active subscription",
                 );

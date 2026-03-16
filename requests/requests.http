@@ -13,7 +13,7 @@ POST  {{base_url}}/auth/register
 Content-Type: application/json
 
 {
-  "email": "marco7@gmail.com",
+  "email": "lipera@example.com",
   "password": "password123"
 }
 
@@ -24,13 +24,13 @@ POST  {{base_url}}/auth/login
 Content-Type: application/json
 
 {
-  "email": "marco7@gmail.com",
+  "email": "lipera@example.com",
   "password": "password123"
 }
 
   
 ### GET ME SUBSCRIPTION
-GET {{base_url}}/me/subscription
+GET {{base_url}}/billing/me/subscription
 Authorization: Bearer {{token}}
 
 
@@ -49,10 +49,11 @@ GET {{base_url}}/usage/my-usage
 Authorization: Bearer {{token}}
 
 
+### CHANGE PLAN
 POST {{base_url}}/billing/change-plan
 Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
-  "planId": "newPlanId"
+  "planId": "ENTERPRISE"
 }

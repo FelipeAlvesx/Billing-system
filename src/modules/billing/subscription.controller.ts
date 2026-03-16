@@ -6,10 +6,17 @@ export class SubscriptionController {
 
     changePlan = async (req: Request, res: Response) => {
         //validations
-        return this.subscriptionService.changePlan(
+        this.subscriptionService.changePlan(
             req.user!.userEmail,
             req.body.planId,
         );
+        return res
+            .status(200)
+            .json({
+                success: true,
+                message: "Plano atualizado com sucesso",
+                planId: req.body.planId,
+            });
     };
 
     getActiveSubscription = async (req: Request, res: Response) => {

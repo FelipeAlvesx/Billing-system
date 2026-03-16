@@ -9,14 +9,14 @@ export class SubscriptionService {
         private readonly planRepo: PlanRepo,
     ) {}
 
-    async changePlan(email: string, newPlanId: string) {
+    async changePlan(email: string, code: string) {
         // Buscar usuário pelo email
         const user = await this.userRepo.findByEmail(email);
         if (!user) {
             throw new Error("Usuário não encontrado");
         }
 
-        const newPlan = await this.planRepo.findByCode(newPlanId);
+        const newPlan = await this.planRepo.findByCode(code);
         if (!newPlan) {
             throw new Error("Plano não encontrado");
         }
@@ -24,7 +24,7 @@ export class SubscriptionService {
         // Atualizar planId da subscription ativa
         const result = await this.subscriptionRepo.changePlanIdByUserEmail(
             user.email,
-            newPlanId,
+            newPlan.id,
         );
         if (result.count === 0) {
             throw new Error(
