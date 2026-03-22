@@ -5,18 +5,18 @@ export class SubscriptionController {
     constructor(private readonly subscriptionService: SubscriptionService) {}
 
     changePlan = async (req: Request, res: Response) => {
-        //validations
-        this.subscriptionService.changePlan(
-            req.user!.userEmail,
-            req.body.planId,
-        );
-        return res
-            .status(200)
-            .json({
-                success: true,
-                message: "Plano atualizado com sucesso",
-                planId: req.body.planId,
-            });
+        try {
+            return res
+                .status(200)
+                .send(
+                    await this.subscriptionService.changePlan(
+                        req.user!.userEmail,
+                        req.body.planCode,
+                    ),
+                );
+        } catch (error) {
+            return res.status(500).json({ error: (error as Error).message });
+        }
     };
 
     getActiveSubscription = async (req: Request, res: Response) => {

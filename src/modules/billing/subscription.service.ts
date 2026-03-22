@@ -32,7 +32,10 @@ export class SubscriptionService {
             );
         }
 
-        return result;
+        return {
+            success: true,
+            newPlan: newPlan.code,
+        };
     }
 
     async getActiveSubscriptionByEmail(email: string) {
