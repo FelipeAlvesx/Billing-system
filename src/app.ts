@@ -24,8 +24,6 @@ app.use("/plans", jwtMiddleware, planRouter);
 app.use("/usage", jwtMiddleware, usageRouter);
 app.use(errorHandler);
 
-app.get("/api/data", (req, res) => {});
-
 process.on("SIGINT", async () => {
     await prisma.$disconnect();
     process.exit(0);

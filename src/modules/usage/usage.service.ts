@@ -25,11 +25,12 @@ export class UsageService {
         };
     }
 
-    async consume(userId: any, metricKey: any, cost: any) {
+    async consume(userId: string, metricKey: string, cost: number) {
         try {
             //get active subscription with plan features and limits
             const activeSubscription =
                 await this.subRepo.findActiveByUserId(userId);
+
             console.log("Active subscription:", activeSubscription);
 
             const limits = activeSubscription?.plan.limits || [];
@@ -51,7 +52,11 @@ export class UsageService {
                 periodEnd,
             });
 
-            if (currentUsage && currentUsage.used + cost > limit.limitValue) {
+            if (
+                limit.limitValue !== -1 &&
+                currentUsage &&
+                currentUsage.used + cost > limit.limitValue
+            ) {
                 throw new Error("Usage limit exceeded for this metric");
             }
 

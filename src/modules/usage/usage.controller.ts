@@ -9,7 +9,7 @@ export class UsageController {
         try {
             const userEmail = req.user?.userEmail;
 
-            if (!userEmail) throw Errors.unauthenticated;
+            if (!userEmail) throw Errors.unauthenticated();
             const usage = await this.usageService.getMyUsage(userEmail!);
             console.log("Usage retrieved:", usage);
 

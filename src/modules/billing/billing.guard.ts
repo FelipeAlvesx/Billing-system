@@ -42,11 +42,11 @@ export function billingGuard(prisma: PrismaClient) {
         return async (req, _res, next) => {
             try {
                 const user = req.user;
-                const userId = await userRepo.findByEmail(
+                const getUser = await userRepo.findByEmail(
                     user?.userEmail || "",
                 );
-                if (!userId) throw Errors.unauthenticated();
-                await usageService.consume(userId, metricKey, cost);
+                if (!getUser) throw Errors.unauthenticated();
+                await usageService.consume(getUser.id, metricKey, cost);
                 return next();
             } catch (err) {
                 return next(err);
