@@ -1,7 +1,6 @@
 import { Router } from "express";
 import { subscriptionController } from "./subscription.factory";
 import { billingGuard } from "./billing.guard";
-import { jwtMiddleware } from "@/middlewares/auth.middleware";
 import { FeatureKey, MetricKey } from "./billing.types";
 import { prisma } from "@/config/db";
 import { UsageService } from "../usage/usage.service";
@@ -17,19 +16,14 @@ billingRouter.get(
     subscriptionController.getActiveSubscription,
 );
 
-billingRouter.post(
-    "/billing/change-plan",
-    jwtMiddleware,
-    subscriptionController.changePlan,
-);
+billingRouter.post("/billing/change-plan", subscriptionController.changePlan);
 
 billingRouter.get(
     "/exports/pdf",
-    jwtMiddleware,
     guard.requireFeature(FeatureKey.EXPORT_PDF),
     async (req, res) => {
         const userEmail = req.user?.userEmail;
-        const user = await userRepo.findByEmail(userEmail!);
+        const user: any = await userRepo.findByEmail(userEmail!);
 
         await usageService.consume(user?.id, MetricKey.API_CALLS, 1);
         return res.status(200).json({

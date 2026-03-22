@@ -19,6 +19,7 @@ export function jwtMiddleware(
         res.status(401).send("Unauthorized");
         return;
     }
+    console.log("Received token:", token);
 
     try {
         const segredo = process.env.JWT_SECRET;

@@ -13,7 +13,7 @@ POST  {{base_url}}/auth/register
 Content-Type: application/json
 
 {
-  "email": "lipera@example.com",
+  "email": "newuser@example.com",
   "password": "password123"
 }
 
@@ -24,7 +24,7 @@ POST  {{base_url}}/auth/login
 Content-Type: application/json
 
 {
-  "email": "lipera@example.com",
+  "email": "newuser@example.com",
   "password": "password123"
 }
 
@@ -55,5 +55,5 @@ Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
-  "planCode": "PRO"
+  "planCode": "ENTERPRISE"
 }
