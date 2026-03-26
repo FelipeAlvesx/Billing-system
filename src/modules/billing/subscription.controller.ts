@@ -1,10 +1,11 @@
 import { Request, Response } from "express";
 import { SubscriptionService } from "./subscription.service";
+import { Errors } from "@/shared/errors";
 
 export class SubscriptionController {
     constructor(private readonly subscriptionService: SubscriptionService) {}
 
-    changePlan = async (req: Request, res: Response) => {
+    changePlan = async (req: Request, res: Response, next: Function) => {
         try {
             return res
                 .status(200)
@@ -15,17 +16,19 @@ export class SubscriptionController {
                     ),
                 );
         } catch (error) {
-            return res.status(500).json({ error: (error as Error).message });
+            return next(error);
         }
     };
 
-    getActiveSubscription = async (req: Request, res: Response) => {
+    getActiveSubscription = async (
+        req: Request,
+        res: Response,
+        next: Function,
+    ) => {
         try {
             const userEmail = req.user?.userEmail;
             if (!userEmail) {
-                return res
-                    .status(401)
-                    .json({ error: "Usuário não identificado" });
+                return next(Errors.unauthenticated());
             }
 
             const subscription =
@@ -34,14 +37,14 @@ export class SubscriptionController {
                 );
 
             if (!subscription) {
-                return res
-                    .status(404)
-                    .json({ error: "Nenhuma subscription ativa encontrada" });
+                return next(
+                    Errors.notFound("Nenhuma subscription ativa encontrada"),
+                );
             }
 
             return res.status(200).json(subscription);
         } catch (error) {
-            return res.status(500).json({ error: (error as Error).message });
+            return next(error);
         }
     };
 }
